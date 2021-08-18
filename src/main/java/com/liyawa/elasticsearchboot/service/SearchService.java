@@ -43,7 +43,7 @@ public class SearchService {
     searchRequest.indices("whatever");
     SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
     QueryBuilder matchQueryBuilder =
-        QueryBuilders.matchQuery("user_name", "whatever.lu");
+        QueryBuilders.matchQuery("user_name", "whatever lu").fuzziness(Fuzziness.ONE);
     searchSourceBuilder.query(matchQueryBuilder);
     searchRequest.source(searchSourceBuilder);
     SearchResponse searchResponse = searchClient.search(searchRequest, RequestOptions.DEFAULT);

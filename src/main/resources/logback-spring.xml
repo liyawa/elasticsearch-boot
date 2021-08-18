@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+  <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+  <!--  <include resource="org/springframework/boot/logging/logback/console-appender.xml"/>-->
+  <!--  <jmxConfigurator/>-->
+  <statusListener class="ch.qos.logback.core.status.OnConsoleStatusListener"/>
+  <Property name="default_layout"
+    value="[%date{yyyy-MM-dd'T'HH:mm:ss.SSSX}]|%-4level|%5.5thread|%20.20logger{36}:%4L|%msg|%X{X-Request-Id}%n"/>
+  <Property name="perf_layout" value="%msg%n"/>
+  <Property name="console_pattern"
+    value="[%date{yyyy-MM-dd'T'HH:mm:ss.SSSX}]|%-4level|%5.5thread|%20.20logger{36}:%4L|%msg|%X{X-Request-Id}%n"/>
+  <Property name="LOG_HOME" value="${LOG_PATH:-${catalina.home}/logs/site}"/>
+
+  <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder>
+      <Pattern>
+        [%date{yyyy-MM-dd'T'HH:mm:ss.SSSX}]|%-4level|%5.5thread|%20.20logger{36}:%4L|%msg|%X{X-Request-Id}%n
+      </Pattern>
+    </encoder>
+  </appender>
+
+  <appender name="defaultLog" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <file>${LOG_HOME}/default.log</file>
+    <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+      <FileNamePattern>${LOG_HOME}/default.log_%d{yyyy-MM-dd}.%i.log</FileNamePattern>
+      <maxFileSize>2000MB</maxFileSize>
+      <maxHistory>30</maxHistory>
+    </rollingPolicy>
+    <encoder>
+      <pattern>${default_layout}</pattern>
+    </encoder>
+  </appender>
+
+  <appender name="errorLog" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <file>${LOG_HOME}/global_error.log</file>
+    <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+      <FileNamePattern>${LOG_HOME}/global_error.log_%d{yyyy-MM-dd}.%i.log</FileNamePattern>
+      <maxFileSize>1000MB</maxFileSize>
+      <maxHistory>30</maxHistory>
+    </rollingPolicy>
+    <encoder>
+      <pattern>
+        <pattern>${default_layout}</pattern>
+      </pattern>
+    </encoder>
+  </appender>
+
+  <appender name="servicePerf" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <file>${LOG_HOME}/service_perf/perfStats.log</file>
+    <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+      <FileNamePattern>${LOG_HOME}/service_perf/perfStats.log_%d{yyyy-MM-dd}.%i.log
+      </FileNamePattern>
+      <maxFileSize>1000MB</maxFileSize>
+      <maxHistory>30</maxHistory>
+    </rollingPolicy>
+    <encoder>
+      <pattern>
+        <pattern>${default_layout}</pattern>
+      </pattern>
+    </encoder>
+  </appender>
+
+  <appender name="daoPerf" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <file>${LOG_HOME}/dao_perf/perfStats.log</file>
+    <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+      <FileNamePattern>${LOG_HOME}/dao_perf/perfStats.log_%d{yyyy-MM-dd}.%i.log</FileNamePattern>
+      <maxFileSize>1000MB</maxFileSize>
+      <maxHistory>30</maxHistory>
+    </rollingPolicy>
+    <encoder>
+      <pattern>
+        <pattern>${default_layout}</pattern>
+      </pattern>
+    </encoder>
+  </appender>
+
+  <appender name="httpPerf" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <file>${LOG_HOME}/http_perf/perfStats.log</file>
+    <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+      <FileNamePattern>${LOG_HOME}/http_perf/perfStats.log_%d{yyyy-MM-dd}.%i.log</FileNamePattern>
+      <maxFileSize>1000MB</maxFileSize>
+      <maxHistory>30</maxHistory>
+    </rollingPolicy>
+    <encoder>
+      <pattern>
+        <pattern>${default_layout}</pattern>
+      </pattern>
+    </encoder>
+  </appender>
+
+  <appender name="feignClientPerf" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <file>${LOG_HOME}/feign_perf/perfStats.log</file>
+    <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+      <FileNamePattern>${LOG_HOME}/feign_perf/perfStats.log_%d{yyyy-MM-dd}.%i.log</FileNamePattern>
+      <maxFileSize>1000MB</maxFileSize>
+      <maxHistory>30</maxHistory>
+    </rollingPolicy>
+    <encoder>
+      <pattern>
+        <pattern>${default_layout}</pattern>
+      </pattern>
+    </encoder>
+  </appender>
+
+
+  <logger name="service.perf.logger" level="info" additivity="false">
+    <appender-ref ref="servicePerf"/>
+  </logger>
+
+  <logger name="dao.perf.logger" level="info" additivity="false">
+    <Appender-ref ref="daoPerf"/>
+  </logger>
+
+  <logger name="http.perf.logger" level="info" additivity="false">
+    <Appender-ref ref="httpPerf"/>
+  </logger>
+
+  <logger name="feign.perf.logger" level="info" additivity="false">
+    <Appender-ref ref="feignClientPerf"/>
+  </logger>
+
+  <logger name="global.error.log" level="error" additivity="false">
+    <Appender-ref ref="errorLog"/>
+  </logger>
+
+  <logger name="org.springframework" level="warn" />
+
+  <logger name="org.mybatis" level="warn" />
+  <!--开启elasticSearch 日志打印-->
+  <logger name="org.springframework.data.elasticsearch.client.WIRE" level="trace"/>
+
+  <root level="info">
+<!--    <appender-ref ref="defaultLog"/>-->
+    <appender-ref ref="CONSOLE"/>
+  </root>
+
+</configuration>
